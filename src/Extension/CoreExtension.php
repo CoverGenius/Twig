@@ -1477,7 +1477,7 @@ function twig_get_attribute(Environment $env, Source $source, $object, $item, ar
     }
 
     // object property
-    if (/* Template::METHOD_CALL */ 'method' !== $type) {
+    if (hasAttribute($object, $item) || \array_key_exists((string) $item, (array) $object)) {
         if (isset($object->$item) || \array_key_exists((string) $item, (array) $object)) {
             if ($isDefinedTest) {
                 return true;
@@ -1576,6 +1576,19 @@ function twig_get_attribute(Environment $env, Source $source, $object, $item, ar
     }
 
     return $ret;
+}
+
+function hasAttribute($object, $attribute)
+{
+    if (isset($object->$attribute)) {
+        return true;
+    }
+
+    if (method_exists($object, 'hasAttribute')) {
+        return $object->hasAttribute($attribute);
+    }
+
+    return false;
 }
 
 /**
